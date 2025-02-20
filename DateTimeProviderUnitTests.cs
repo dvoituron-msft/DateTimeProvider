@@ -4,7 +4,7 @@ public class DateTimeProviderUnitTests
 {
     [Theory]
     [MemberData(nameof(GetNumbers))]
-    public void MyTest1(int year)
+    public void MySimpleTest(int year)
     {
         // Context 1
         using var context1 = new DateTimeProviderContext(new DateTime(year, 5, 26));
@@ -34,6 +34,23 @@ public class DateTimeProviderUnitTests
 
         Assert.Equal(year + 10, DateTimeProvider.Today.Year);    // Sequence 0
         Assert.Equal(year + 11, DateTimeProvider.Today.Year);    // Sequence 1
+    }
+
+    [Theory]
+    [MemberData(nameof(GetNumbers))]
+    public void MyTestUsingListOfDates(int year)
+    {
+        // Context Sequence
+        using var contextSequence = new DateTimeProviderContext(
+        [
+            new DateTime(year + 10, 5, 26),
+            new DateTime(year + 11, 5, 27)
+        ]);
+
+        Assert.Equal(year + 10, DateTimeProvider.Today.Year);    // Sequence 0
+        Assert.Equal(year + 11, DateTimeProvider.Today.Year);    // Sequence 1
+
+        Assert.Throws<InvalidOperationException>(() => DateTimeProvider.Today); // No more dates are available
     }
 
     // List of numbers from 1 to 100

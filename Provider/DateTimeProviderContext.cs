@@ -14,12 +14,6 @@ public record DateTimeProviderContext : IDisposable
     internal static DateTimeProviderContext? Current => _asyncScopeStack.Value?.IsEmpty == false ? _asyncScopeStack.Value.Peek() : null;
 
     /// <summary>
-    /// Create a new context for the <see cref="DateTimeProvider" /> using the specified date and time.
-    /// </summary>
-    /// <param name="value">Specifies the date and time to return while in scope.</param>
-    public DateTimeProviderContext(DateTime value) : this(_ => value) { }
-
-    /// <summary>
     /// Create a new context for the <see cref="DateTimeProvider" /> using a sequence of date and time.
     /// </summary>
     /// <param name="sequence">Sequence of date and time to return while in scope.</param>
@@ -28,6 +22,25 @@ public record DateTimeProviderContext : IDisposable
         _asyncScopeStack.Value = (_asyncScopeStack.Value ?? []).Push(this);
         Sequence = sequence;
     }
+
+    /// <summary>
+    /// Create a new context for the <see cref="DateTimeProvider" /> using the specified date and time.
+    /// </summary>
+    /// <param name="value">Specifies the date and time to return while in scope.</param>
+    public DateTimeProviderContext(DateTime value) : this(_ => value) { }
+
+    /// <summary>
+    /// Create a new context for the <see cref="DateTimeProvider" /> using a list of date and time.
+    /// Each call to <see cref="DateTimeProvider.Now" /> will return the next date and time in the list,
+    /// until the last date and time is reached.
+    /// If more calls are made after the last date and time, an <see cref="InvalidOperationException" /> is thrown.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public DateTimeProviderContext(DateTime[] values) 
+        : this(i => i < values.Length 
+                  ? values[i]
+                  : throw new InvalidOperationException("This is the last call in the sequence. No more dates are available.")) { }
 
     /// <summary>
     /// Gets the current index.
