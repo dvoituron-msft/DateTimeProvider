@@ -2,6 +2,10 @@
 {
     internal class Program
     {
+        /// <summary>
+        /// Bulk examples to test how DateTimeProvider works.
+        /// </summary>
+        /// <returns></returns>
         static async Task Main()
         {
             // No Context
