@@ -7,9 +7,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefineConstants>RUN_CONSOLE</DefineConstants>  <!-- Set RUN_BENCHMARKS to run the benchmarks -->
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DateTimeProvider\DateTimeProvider.csproj" />
     <ProjectReference Include="..\SampleLib\SampleLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
   </ItemGroup>
 
 </Project>

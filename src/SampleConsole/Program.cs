@@ -1,15 +1,47 @@
 ﻿namespace SampleConsole
 {
+    using BenchmarkDotNet.Running;
     using SampleLib;
+
+    /* ***********************************************************************
+     *  Update the RUN_BENCHMARKS constant (in csproj) to run the benchmarks.
+     * ***********************************************************************
+     */
 
     public class Program
     {
+#if RUN_BENCHMARKS
+        static void Main()
+        {
+            /*
+             * BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.3321)
+             * 11th Gen Intel Core i7-11850H 2.50GHz, 1 CPU, 16 logical and 8 physical cores
+             * .NET SDK 9.0.200-preview.0.25057.12
+             *   [Host]     : .NET 9.0.2 (9.0.225.6610), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+             *   DefaultJob : .NET 9.0.2 (9.0.225.6610), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+             * 
+             * 
+             * | Method               | Mean     | Error    | StdDev   | Median   |
+             * |--------------------- |---------:|---------:|---------:|---------:|
+             * | SystemDateTime_Now   | 67.52 ns | 1.878 ns | 5.419 ns | 65.91 ns |
+             * | DateTimeProvider_Now | 68.44 ns | 2.412 ns | 7.037 ns | 65.83 ns |
+             * 
+             */
+
+            // Run benchmarks: dotnet run -c Release
+            var summary = BenchmarkRunner.Run<DateTimeBenchmarks>();
+            return;
+        }
+#else
+
         /// <summary>
         /// Bulk examples to test how DateTimeProvider works.
         /// </summary>
         /// <returns></returns>
         static async Task Main()
         {
+
+
             // No Context
             Console.WriteLine($"TDAY: {MyClass.GetCurrentYear()}");
 
@@ -68,5 +100,6 @@
 
             await Task.CompletedTask;
         }
+#endif
     }
 }
