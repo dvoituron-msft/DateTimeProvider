@@ -1,12 +1,5 @@
 ﻿namespace ConsoleDateTimeProvider
 {
-    /*
-     *  To run this example in Console Mode, add this configuration in the csproj
-     *  
-     *     <StartupObject>ConsoleDateTimeProvider.Program</StartupObject>
-     * 
-     */
-
     public class Program
     {
         /// <summary>
