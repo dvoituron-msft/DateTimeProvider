@@ -22,8 +22,16 @@ public static class DateTimeProvider
     /// </summary>
     public static DateTime Today => Now.Date;
 
+    /// <summary>
+    /// Indicates whether a context is required to be active.
+    /// </summary>
     public static bool RequiredActiveContext { get; set; } = false;
 
+    /// <summary>
+    /// Returns the current date and time on this computer.
+    /// </summary>
+    /// <returns>The current date and time on this computer.</returns>
+    /// <exception cref="InvalidOperationException">If <see cref="RequiredActiveContext"/> is true and no context is active.</exception>
     private static DateTime GetSystemDate()
     {
         if (RequiredActiveContext)
