@@ -1,5 +1,7 @@
-﻿namespace ConsoleDateTimeProvider
+﻿namespace SampleConsole
 {
+    using SampleLib;
+
     public class Program
     {
         /// <summary>
@@ -9,19 +11,19 @@
         static async Task Main()
         {
             // No Context
-            Console.WriteLine($"TDAY: {DateTimeProvider.Today:yyyy}");
+            Console.WriteLine($"TDAY: {MyClass.GetCurrentYear()}");
 
             // Synchronous
             using (var context1 = new DateTimeProviderContext(new DateTime(2000, 5, 26)))
             {
-                Console.WriteLine($"2000: {DateTimeProvider.Today:yyyy}");
+                Console.WriteLine($"2000: {MyClass.GetCurrentYear()}");
 
                 using (var context2 = new DateTimeProviderContext(new DateTime(2001, 01, 01)))
                 {
-                    Console.WriteLine($"2001: {DateTimeProvider.Today:yyyy}");
+                    Console.WriteLine($"2001: {MyClass.GetCurrentYear()}");
                 }
 
-                Console.WriteLine($"2000: {DateTimeProvider.Today:yyyy}");
+                Console.WriteLine($"2000: {MyClass.GetCurrentYear()}");
             }
 
             // Asynchronous
@@ -37,7 +39,7 @@
             await Task.WhenAll(t1, t2, t3, t4);
 
             // Not Context
-            Console.WriteLine($"TDAY: {DateTimeProvider.Today:yyyy}");
+            Console.WriteLine($"TDAY: {MyClass.GetCurrentYear()}");
         }
 
         private static async Task DisplayThreadAsync(int year, bool? withAwait = null)
@@ -46,21 +48,21 @@
             {
                 if (withAwait == true)
                 {
-                    Console.WriteLine($"{year}: {DateTimeProvider.Today:yyyy}");
+                    Console.WriteLine($"{year}: {MyClass.GetCurrentYear()}");
                     await DisplayThreadAsync(year + 1);
-                    Console.WriteLine($"{year}: {DateTimeProvider.Today:yyyy}");
+                    Console.WriteLine($"{year}: {MyClass.GetCurrentYear()}");
                 }
 
                 else if (withAwait == false)
                 {
-                    Console.WriteLine($"{year}: {DateTimeProvider.Today:yyyy}");
+                    Console.WriteLine($"{year}: {MyClass.GetCurrentYear()}");
                     DisplayThreadAsync(year + 1);
-                    Console.WriteLine($"{year}: {DateTimeProvider.Today:yyyy}");
+                    Console.WriteLine($"{year}: {MyClass.GetCurrentYear()}");
                 }
 
                 else
                 {
-                    Console.WriteLine($"{year}: {DateTimeProvider.Today:yyyy}");
+                    Console.WriteLine($"{year}: {MyClass.GetCurrentYear()}");
                 }
             }
 

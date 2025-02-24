@@ -1,7 +1,31 @@
 ﻿using Xunit;
+using Xunit.Abstractions;
 
-public class DateTimeProviderUnitTests
+public class DateTimeProviderUnitTests : StrictAutoMockTestClass
 {
+    public DateTimeProviderUnitTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
+    [Fact]
+    public void LibWithContext()
+    {
+        using var context = new DateTimeProviderContext(new DateTime(2020, 5, 26));
+
+        var year = SampleLib.MyClass.GetCurrentYear();
+
+        Assert.Equal(2020, year);
+    }
+
+    [Fact]
+    public void LibWithoutContext()
+    {
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            var year = SampleLib.MyClass.GetCurrentYear();
+        });
+    }
+
     [Theory]
     [MemberData(nameof(GetNumbers))]
     public void MySimpleTest(int year)
