@@ -21,10 +21,12 @@
              *   DefaultJob : .NET 9.0.2 (9.0.225.6610), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
              * 
              * 
-             * | Method               | Mean     | Error    | StdDev   | Median   |
-             * |--------------------- |---------:|---------:|---------:|---------:|
-             * | SystemDateTime_Now   | 67.52 ns | 1.878 ns | 5.419 ns | 65.91 ns |
-             * | DateTimeProvider_Now | 68.44 ns | 2.412 ns | 7.037 ns | 65.83 ns |
+             * | Method                   | Mean     | Error    | StdDev   | Median   |
+             * |------------------------- |---------:|---------:|---------:|---------:|
+             * | SystemDateTime_Now       | 69.06 ns | 1.774 ns | 5.174 ns | 68.09 ns |
+             * | DateTimeProvider_Now     | 68.78 ns | 1.896 ns | 5.561 ns | 67.79 ns |
+             * | SystemDateTime_AddYear   | 74.82 ns | 1.683 ns | 4.936 ns | 73.90 ns |
+             * | DateTimeProvider_AddYear | 75.25 ns | 2.002 ns | 5.582 ns | 73.16 ns |
              * 
              */
 
