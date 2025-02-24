@@ -102,3 +102,30 @@ using var contextSequence = new DateTimeProviderContext(
 
 If you make more than 2 calls, an `InvalidOperationException` exception will be thrown.
 This indicates that you have exhausted the defined return sequence and that there is no return value for the next call.
+
+## Unit Test - Requirement to use context
+
+Some uses (like Unit Tests) require that the date be defined in a context.
+You can define this requirement setting the `DateTimeProvider.RequiredActiveContext` property to `true`.
+
+## Bechmarks
+
+These benchmarks results check the performance of `DateTimeProvider` against `DateTime.Now`.
+- **SystemDateTime**: `DateTime.Now`
+- **DateTimeProvider**: `DateTimeProvider.Now`
+
+These results show that `DateTimeProvider` performs just as well as `DateTime.Now`.
+
+```
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.3321)
+11th Gen Intel Core i7-11850H 2.50GHz, 1 CPU, 16 logical and 8 physical cores```
+.NET SDK 9.0.200-preview.0.25057.12
+  [Host]     : .NET 9.0.2 (9.0.225.6610), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  DefaultJob : .NET 9.0.2 (9.0.225.6610), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+
+
+| Method               | Mean     | Error    | StdDev   | Median   |
+|--------------------- |---------:|---------:|---------:|---------:|
+| SystemDateTime       | 69.06 ns | 1.774 ns | 5.174 ns | 68.09 ns |
+| DateTimeProvider     | 68.78 ns | 1.896 ns | 5.561 ns | 67.79 ns |
+```
