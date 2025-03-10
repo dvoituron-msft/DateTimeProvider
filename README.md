@@ -46,7 +46,7 @@ Plus, what if you have existing code and just want to rewrite it to replace the 
 ## Ambient Context Model
 
 To avoid injecting such a simple class and to simplify updating existing code, 
-I propose a solution that uses the **Ambient Context Model**.
+We propose a solution that uses the **Ambient Context Model**.
 
 To do this, use a `DateTimeProvider` class that determines the current context of use: 
 `DateTime.Now` is replaced by `DateTimeProvider.Now` in your code.
