@@ -30,11 +30,12 @@ public static class DateTimeProvider
     /// <summary>
     /// Returns the current date and time on this computer.
     /// </summary>
+    /// <param name="requiredContext">Indicates whether a context is required to be active (used by internal unit tests).</param>
     /// <returns>The current date and time on this computer.</returns>
     /// <exception cref="InvalidOperationException">If <see cref="RequiredActiveContext"/> is true and no context is active.</exception>
-    private static DateTime GetSystemDate()
+    internal static DateTime GetSystemDate(bool requiredContext = true)
     {
-        if (RequiredActiveContext)
+        if (RequiredActiveContext && requiredContext)
         {
             throw new InvalidOperationException("DateTimeProvider requires a context to be set (e.g. `using var context = new DateTimeProviderContext(new DateTime(2025, 1, 18));`");
         }

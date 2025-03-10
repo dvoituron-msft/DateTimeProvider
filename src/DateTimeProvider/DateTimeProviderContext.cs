@@ -62,12 +62,22 @@ public record DateTimeProviderContext : IDisposable
 
         CurrentIndex++;
 
-        if (CurrentIndex >= 99999999)
+        if (CurrentIndex >= uint.MaxValue)
         {
             CurrentIndex = 0;
         }
 
         return value;
+    }
+
+    /// <summary>
+    /// Force the next value to used with the NextValue method.
+    /// Only for testing purposes.
+    /// </summary>
+    /// <param name="value"></param>
+    internal void ForceNextValue(uint value)
+    {
+        CurrentIndex = value;
     }
 
     /// <summary>
