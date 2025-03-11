@@ -19,7 +19,7 @@ public record DateTimeProviderContext : IDisposable
     /// <param name="sequence">Sequence of date and time to return while in scope.</param>
     public DateTimeProviderContext(Func<uint, DateTime> sequence)
     {
-        _asyncScopeStack.Value = (_asyncScopeStack.Value ?? []).Push(this);
+        _asyncScopeStack.Value = (_asyncScopeStack.Value ?? ImmutableStack<DateTimeProviderContext>.Empty).Push(this);
         Sequence = sequence;
     }
 
