@@ -7,6 +7,7 @@
 public record DateTimeProviderContext : IDisposable
 {
     private static readonly AsyncLocal<ImmutableStack<DateTimeProviderContext>> _asyncScopeStack = new();
+    private readonly AsyncLocal<uint> _asyncCurrentIndex = new();
 
     /// <summary>
     /// Gets the current <see cref="DateTimeProviderContext" />.
@@ -43,11 +44,6 @@ public record DateTimeProviderContext : IDisposable
                   : throw new InvalidOperationException("This is the last call in the sequence. No more dates are available.")) { }
 
     /// <summary>
-    /// Gets the current index.
-    /// </summary>
-    private uint CurrentIndex { get; set; }
-
-    /// <summary>
     /// Gets the date and time to return while in scope.
     /// </summary>
     internal Func<uint, DateTime> Sequence { get; }
@@ -58,14 +54,10 @@ public record DateTimeProviderContext : IDisposable
     /// <returns></returns>
     internal DateTime NextValue()
     {
-        var value = Sequence.Invoke(CurrentIndex);
+        var currentIndex = _asyncCurrentIndex.Value;
+        var value = Sequence.Invoke(currentIndex);
 
-        CurrentIndex++;
-
-        if (CurrentIndex >= uint.MaxValue)
-        {
-            CurrentIndex = 0;
-        }
+        _asyncCurrentIndex.Value = currentIndex >= uint.MaxValue ? 0 : currentIndex + 1;
 
         return value;
     }
@@ -77,7 +69,7 @@ public record DateTimeProviderContext : IDisposable
     /// <param name="value"></param>
     internal void ForceNextValue(uint value)
     {
-        CurrentIndex = value;
+        _asyncCurrentIndex.Value = value;
     }
 
     /// <summary>

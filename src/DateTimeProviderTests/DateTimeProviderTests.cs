@@ -67,7 +67,7 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
     [Fact]
     public void DateTimeProvider_ResetCurrentIndex()
     {
-        const uint maxValue = uint.MaxValue - 1;
+        const uint maxValue = uint.MaxValue;
 
         var currentIndex = 0u;
         using var context = new DateTimeProviderContext(i =>
