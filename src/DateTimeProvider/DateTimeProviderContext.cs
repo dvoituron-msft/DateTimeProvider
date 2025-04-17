@@ -6,13 +6,13 @@
 /// </summary>
 public record DateTimeProviderContext : IDisposable
 {
-    private static readonly AsyncLocal<ImmutableStack<DateTimeProviderContext>> _asyncScopeStack = new();
+    private static readonly AsyncLocal<ImmutableStack<DateTimeProviderContext>> s_asyncScopeStack = new();
     private readonly AsyncLocal<uint> _asyncCurrentIndex = new();
 
     /// <summary>
     /// Gets the current <see cref="DateTimeProviderContext" />.
     /// </summary>
-    internal static DateTimeProviderContext? Current => _asyncScopeStack.Value?.IsEmpty == false ? _asyncScopeStack.Value.Peek() : null;
+    internal static DateTimeProviderContext? Current => s_asyncScopeStack.Value?.IsEmpty == false ? s_asyncScopeStack.Value.Peek() : null;
 
     /// <summary>
     /// Create a new context for the <see cref="DateTimeProvider" /> using a sequence of date and time.
@@ -20,7 +20,7 @@ public record DateTimeProviderContext : IDisposable
     /// <param name="sequence">Sequence of date and time to return while in scope.</param>
     public DateTimeProviderContext(Func<uint, DateTime> sequence)
     {
-        _asyncScopeStack.Value = (_asyncScopeStack.Value ?? ImmutableStack<DateTimeProviderContext>.Empty).Push(this);
+        s_asyncScopeStack.Value = (s_asyncScopeStack.Value ?? ImmutableStack<DateTimeProviderContext>.Empty).Push(this);
         Sequence = sequence;
     }
 
@@ -38,10 +38,11 @@ public record DateTimeProviderContext : IDisposable
     /// </summary>
     /// <param name="values"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    public DateTimeProviderContext(DateTime[] values) 
-        : this(i => i < values.Length 
+    public DateTimeProviderContext(DateTime[] values)
+        : this(i => i < values.Length
                   ? values[i]
-                  : throw new InvalidOperationException("This is the last call in the sequence. No more dates are available.")) { }
+                  : throw new InvalidOperationException("This is the last call in the sequence. No more dates are available."))
+    { }
 
     /// <summary>
     /// Gets the date and time to return while in scope.
@@ -78,9 +79,9 @@ public record DateTimeProviderContext : IDisposable
     /// </summary>
     public void Dispose()
     {
-        if (_asyncScopeStack.Value?.IsEmpty == false)
+        if (s_asyncScopeStack.Value?.IsEmpty == false)
         {
-            _asyncScopeStack.Value = _asyncScopeStack.Value.Pop();
+            s_asyncScopeStack.Value = s_asyncScopeStack.Value.Pop();
         }
     }
 }

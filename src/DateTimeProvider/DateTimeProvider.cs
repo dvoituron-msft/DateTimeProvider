@@ -25,7 +25,7 @@ public static class DateTimeProvider
     /// <summary>
     /// Indicates whether a context is required to be active.
     /// </summary>
-    public static bool RequiredActiveContext { get; set; } = false;
+    public static bool RequiredActiveContext { get; set; }
 
     /// <summary>
     /// Returns the current date and time on this computer.
