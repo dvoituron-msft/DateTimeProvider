@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Represents the context for the <see cref="DateTimeProvider" />.
@@ -18,7 +19,7 @@ public record DateTimeProviderContext : IDisposable
     /// Create a new context for the <see cref="DateTimeProvider" /> using a sequence of date and time.
     /// </summary>
     /// <param name="sequence">Sequence of date and time to return while in scope.</param>
-    public DateTimeProviderContext(Func<uint, DateTime> sequence)
+    public DateTimeProviderContext(Func<ContextSequence, DateTime> sequence)
     {
         s_asyncScopeStack.Value = (s_asyncScopeStack.Value ?? ImmutableStack<DateTimeProviderContext>.Empty).Push(this);
         Sequence = sequence;
@@ -39,24 +40,24 @@ public record DateTimeProviderContext : IDisposable
     /// <param name="values"></param>
     /// <exception cref="InvalidOperationException"></exception>
     public DateTimeProviderContext(DateTime[] values)
-        : this(i => i < values.Length
-                  ? values[i]
+        : this(i => i.Index < values.Length
+                  ? values[i.Index]
                   : throw new InvalidOperationException("This is the last call in the sequence. No more dates are available."))
     { }
 
     /// <summary>
     /// Gets the date and time to return while in scope.
     /// </summary>
-    internal Func<uint, DateTime> Sequence { get; }
+    internal Func<ContextSequence, DateTime> Sequence { get; }
 
     /// <summary>
     /// Returns the next number between 0 and 99999999.
     /// </summary>
     /// <returns></returns>
-    internal DateTime NextValue()
+    internal DateTime NextValue(object? context = null)
     {
         var currentIndex = _asyncCurrentIndex.Value;
-        var value = Sequence.Invoke(currentIndex);
+        var value = Sequence.Invoke(new ContextSequence(currentIndex, context));
 
         _asyncCurrentIndex.Value = currentIndex >= uint.MaxValue ? 0 : currentIndex + 1;
 
@@ -84,4 +85,6 @@ public record DateTimeProviderContext : IDisposable
             s_asyncScopeStack.Value = s_asyncScopeStack.Value.Pop();
         }
     }
+
+    public record ContextSequence(uint Index, object? SourceContext);
 }

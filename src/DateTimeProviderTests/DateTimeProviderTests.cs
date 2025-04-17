@@ -72,7 +72,7 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
         var currentIndex = 0u;
         using var context = new DateTimeProviderContext(i =>
         {
-            currentIndex = i;
+            currentIndex = i.Index;
             return new DateTime(2020, 5, 26);
         });
 
@@ -110,7 +110,7 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
     public void DateTimeProvider_Sequence(int year)
     {
         // Context Sequence
-        using var contextSequence = new DateTimeProviderContext(i => i switch
+        using var contextSequence = new DateTimeProviderContext(i => i.Index switch
         {
             0 => new DateTime(year + 10, 5, 26),
             1 => new DateTime(year + 11, 5, 27),
@@ -119,6 +119,23 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
 
         Assert.Equal(year + 10, DateTimeProvider.Today.Year);    // Sequence 0
         Assert.Equal(year + 11, DateTimeProvider.Today.Year);    // Sequence 1
+    }
+
+    [Theory]
+    [MemberData(nameof(GetNumbers))]
+    public void DateTimeProvider_CallingContext(int year)
+    {
+        // Context Sequence
+        using var contextSequence = new DateTimeProviderContext(sequence
+         => sequence.SourceContext switch
+            {
+                "File1.cs" => new DateTime(year + 10, 5, 26),
+                "File2.cs" => new DateTime(year + 11, 5, 27),
+                _ => DateTime.MinValue,
+            });
+
+        Assert.Equal(year + 10, DateTimeProvider.WithContext("File1.cs").Today.Year);    // Sequence 0
+        Assert.Equal(year + 11, DateTimeProvider.WithContext("File2.cs").Today.Year);    // Sequence 1
     }
 
     [Theory]
@@ -152,7 +169,7 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
     {
         public static int GetCurrentYear()
         {
-            return DateTimeProvider.Today.Year;
+            return DateTimeProvider.WithContext("My sample context").Now.Year;
         }
     }
 }
