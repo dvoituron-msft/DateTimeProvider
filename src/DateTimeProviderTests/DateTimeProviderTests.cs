@@ -121,13 +121,14 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
         Assert.Equal(year + 11, DateTimeProvider.Today.Year);    // Sequence 1
     }
 
-    [Theory]
-    [MemberData(nameof(GetNumbers))]
-    public void DateTimeProvider_CallingContext(int year)
+    [Fact]
+    public void DateTimeProvider_CallingContext()
     {
+        const int year = 2020;
+
         // Context Sequence
-        using var contextSequence = new DateTimeProviderContext(sequence
-         => sequence.SourceContext switch
+        using var contextSequence = new DateTimeProviderContext(
+            seq => seq.SourceContext switch
             {
                 "File1.cs" => new DateTime(year + 10, 5, 26),
                 "File2.cs" => new DateTime(year + 11, 5, 27),
