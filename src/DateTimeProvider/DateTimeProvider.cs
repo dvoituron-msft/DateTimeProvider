@@ -1,7 +1,4 @@
-﻿/// <summary>
-/// Returns the current date and time on this computer, expressed as the local time.
-/// </summary>
-public static class DateTimeProvider
+﻿public class DateTimeProvider
 {
     public static CurrentContext WithContext(object context) => new(context);
 
@@ -9,18 +6,18 @@ public static class DateTimeProvider
     /// Gets a <see cref="DateTime" /> object that is set to the current date and time 
     /// on this computer, expressed as the local time.
     /// </summary>
-    public static DateTime Now => GetNow();
+    public static DateTime Now => GetNow<object>(null);
 
     /// <summary>
     /// Gets a <see cref="DateTime" /> object that is set to the current date and time
     /// on this computer, expressed as the Coordinated Universal Time (UTC).
     /// </summary>
-    public static DateTime UtcNow => GetNow().ToUniversalTime();
+    public static DateTime UtcNow => GetNow<object>(null).ToUniversalTime();
 
     /// <summary>
     /// Gets a <see cref="DateTime" /> object that is set to today's date, with the time component set to 00:00:00.
     /// </summary>
-    public static DateTime Today => GetNow().Date;
+    public static DateTime Today => GetNow<object>(null).Date;
 
     /// <summary>
     /// Indicates whether a context is required to be active.
@@ -31,9 +28,10 @@ public static class DateTimeProvider
     /// Gets a <see cref="DateTime" /> object that is set to the current date and time 
     /// on this computer, expressed as the local time.
     /// </summary>
-    internal static DateTime GetNow(object? context = null) => DateTimeProviderContext.Current == null
-                                                            ? GetSystemDate()
-                                                            : DateTimeProviderContext.Current.NextValue(context);
+    internal static DateTime GetNow<U>(object? context = null)
+        => DateTimeProviderContext<U>.Current == null
+         ? GetSystemDate()
+         : DateTimeProviderContext<U>.Current.NextValue<U>(context);
 
     /// <summary>
     /// Returns the current date and time on this computer.
@@ -52,35 +50,29 @@ public static class DateTimeProvider
             return DateTime.Now;
         }
     }
+}
+
+/// <summary>
+/// Returns the current date and time on this computer, expressed as the local time.
+/// </summary>
+public class DateTimeProvider<T>
+{
+    public static CurrentContext<object> WithContext(object context) => new(context);
 
     /// <summary>
-    /// Returns the contextual current date and time on this computer, expressed as the local time.
+    /// Gets a <see cref="DateTime" /> object that is set to the current date and time 
+    /// on this computer, expressed as the local time.
     /// </summary>
-    public record CurrentContext
-    {
-        private object _context;
+    public static DateTime Now => DateTimeProvider.GetNow<T>();
 
-        internal CurrentContext(object context)
-        {
-            _context = context;
-        }
+    /// <summary>
+    /// Gets a <see cref="DateTime" /> object that is set to the current date and time
+    /// on this computer, expressed as the Coordinated Universal Time (UTC).
+    /// </summary>
+    public static DateTime UtcNow => DateTimeProvider.GetNow<T>().ToUniversalTime();
 
-        /// <summary>
-        /// Gets a <see cref="DateTime" /> object that is set to the current date and time 
-        /// on this computer, expressed as the local time.
-        /// </summary>
-        public DateTime Now => GetNow(_context);
-
-        /// <summary>
-        /// Gets a <see cref="DateTime" /> object that is set to the current date and time
-        /// on this computer, expressed as the Coordinated Universal Time (UTC).
-        /// </summary>
-        public DateTime UtcNow => GetNow(_context).ToUniversalTime();
-
-        /// <summary>
-        /// Gets a <see cref="DateTime" /> object that is set to today's date, with the time component set to 00:00:00.
-        /// </summary>
-        public DateTime Today => GetNow(_context).Date;
-
-    }
+    /// <summary>
+    /// Gets a <see cref="DateTime" /> object that is set to today's date, with the time component set to 00:00:00.
+    /// </summary>
+    public static DateTime Today => DateTimeProvider.GetNow<T>().Date;
 }

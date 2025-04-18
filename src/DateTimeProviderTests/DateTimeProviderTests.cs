@@ -141,6 +141,20 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
 
     [Theory]
     [MemberData(nameof(GetNumbers))]
+    public void DateTimeProvider_GenericSource(int year)
+    {
+        // Context Sequence
+        using var contextUnused1 = new DateTimeProviderContext<string>(new DateTime(year + 99, 5, 26));   // Not used
+        using var contextUnused2 = new DateTimeProviderContext<string>(new DateTime(year + 99, 5, 26));   // Not used
+        using var context1 = new DateTimeProviderContext<int>(new DateTime(year + 10, 5, 26));
+        using var context2 = new DateTimeProviderContext<MyUserClass>(new DateTime(year + 11, 5, 26));
+
+        Assert.Equal(year + 11, MyUserClass.GetCurrentYearMyUserClass());     // Context 2
+        Assert.Equal(year + 10, MyUserClass.GetCurrentYearOfInt());           // Context 1
+    }
+
+    [Theory]
+    [MemberData(nameof(GetNumbers))]
     public void DateTimeProvider_UsingListOfDates(int year)
     {
         // Context Sequence
@@ -171,6 +185,20 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
         public static int GetCurrentYear()
         {
             return DateTimeProvider.WithContext("My sample context").Now.Year;
+        }
+        public static int GetCurrentYear<T>()
+        {
+            return DateTimeProvider<T>.Now.Year;
+        }
+
+        public static int GetCurrentYearMyUserClass()
+        {
+            return DateTimeProvider<MyUserClass>.Now.Year;
+        }
+
+        public static int GetCurrentYearOfInt()
+        {
+            return DateTimeProvider<int>.Now.Year;
         }
     }
 }
