@@ -14,19 +14,27 @@
         static void Main()
         {
             /*
-             * BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.3321)
+             * 
+             * BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.3902)
              * 11th Gen Intel Core i7-11850H 2.50GHz, 1 CPU, 16 logical and 8 physical cores
-             * .NET SDK 9.0.200-preview.0.25057.12
-             *   [Host]     : .NET 9.0.2 (9.0.225.6610), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-             *   DefaultJob : .NET 9.0.2 (9.0.225.6610), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+             * .NET SDK 10.0.100-preview.3.25201.16
+             *   [Host]     : .NET 9.0.4 (9.0.425.16305), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+             *   DefaultJob : .NET 9.0.4 (9.0.425.16305), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
              * 
              * 
-             * | Method                   | Mean     | Error    | StdDev   | Median   |
-             * |------------------------- |---------:|---------:|---------:|---------:|
-             * | SystemDateTime_Now       | 69.06 ns | 1.774 ns | 5.174 ns | 68.09 ns |
-             * | DateTimeProvider_Now     | 68.78 ns | 1.896 ns | 5.561 ns | 67.79 ns |
-             * | SystemDateTime_AddYear   | 74.82 ns | 1.683 ns | 4.936 ns | 73.90 ns |
-             * | DateTimeProvider_AddYear | 75.25 ns | 2.002 ns | 5.582 ns | 73.16 ns |
+             * | Method                                     | Mean     | Error    | StdDev   |
+             * |------------------------------------------- |---------:|---------:|---------:|
+             * | SystemDateTime_Now                         | 63.70 ns | 1.101 ns | 1.840 ns |
+             * | DateTimeProvider_Now                       | 65.90 ns | 1.299 ns | 1.945 ns |
+             * | DateTimeProvider_Typed_Now                 | 64.78 ns | 1.168 ns | 2.135 ns |
+             * | DateTimeProvider_WithContext_Now           | 65.54 ns | 1.104 ns | 1.618 ns |
+             * | DateTimeProvider_Typed_WithContext_Now     | 64.89 ns | 0.956 ns | 0.799 ns |
+             * |                                            |          |          |          |
+             * | SystemDateTime_AddYear                     | 70.38 ns | 1.015 ns | 0.900 ns |
+             * | DateTimeProvider_AddYear                   | 73.64 ns | 1.476 ns | 2.116 ns |
+             * | DateTimeProvider_Typed_AddYear             | 74.68 ns | 1.398 ns | 1.373 ns |
+             * | DateTimeProvider_WithContext_AddYear       | 72.23 ns | 1.470 ns | 1.444 ns |
+             * | DateTimeProvider_Typed_WithContext_AddYear | 73.25 ns | 1.461 ns | 2.000 ns |
              * 
              */
 

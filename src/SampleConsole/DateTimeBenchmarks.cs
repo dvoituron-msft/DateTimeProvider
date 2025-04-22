@@ -15,9 +15,29 @@ namespace SampleConsole
         public DateTime DateTimeProvider_Now() => DateTimeProvider.Now;
 
         [Benchmark]
+        public DateTime DateTimeProvider_Typed_Now() => DateTimeProvider<MyClass>.Now;
+
+        [Benchmark]
+        public DateTime DateTimeProvider_WithContext_Now() => DateTimeProvider.WithContext("MyFile1.cs").Now;
+
+        [Benchmark]
+        public DateTime DateTimeProvider_Typed_WithContext_Now() => DateTimeProvider<MyClass>.WithContext("MyFile1.cs").Now;
+
+        [Benchmark]
         public DateTime SystemDateTime_AddYear() => DateTime.Now.AddYears(_yearToAdd);
 
         [Benchmark]
         public DateTime DateTimeProvider_AddYear() => DateTimeProvider.Now.AddYears(_yearToAdd);
+
+        [Benchmark]
+        public DateTime DateTimeProvider_Typed_AddYear() => DateTimeProvider<MyClass>.Now.AddYears(_yearToAdd);
+
+        [Benchmark]
+        public DateTime DateTimeProvider_WithContext_AddYear() => DateTimeProvider.WithContext("MyFile2.cs").Now.AddYears(_yearToAdd);
+
+        [Benchmark]
+        public DateTime DateTimeProvider_Typed_WithContext_AddYear() => DateTimeProvider<MyClass>.WithContext("MyFile2.cs").Now.AddYears(_yearToAdd);
     }
+
+    public record MyClass { }
 }
