@@ -24,6 +24,11 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
         {
             var year = MyUserClass.GetCurrentYear();
         });
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            var year = MyUserClass.GetCurrentYear_OfInt();
+        });
     }
 
     [Fact]
@@ -132,11 +137,13 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
             {
                 "File1.cs" => new DateTime(year + 10, 5, 26),
                 "File2.cs" => new DateTime(year + 11, 5, 27),
+                "File3.cs" => new DateTime(year + 12, 5, 27),
                 _ => DateTime.MinValue,
             });
 
         Assert.Equal(year + 10, DateTimeProvider.WithContext("File1.cs").Today.Year);    // Sequence 0
-        Assert.Equal(year + 11, DateTimeProvider.WithContext("File2.cs").Today.Year);    // Sequence 1
+        Assert.Equal(year + 11, DateTimeProvider.WithContext("File2.cs").Now.Year);      // Sequence 1
+        Assert.Equal(year + 12, DateTimeProvider.WithContext("File3.cs").UtcNow.Year);   // Sequence 2
     }
 
     [Theory]
@@ -151,6 +158,22 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
 
         Assert.Equal(year + 11, MyUserClass.GetCurrentYear_MyUserClass());     // Context 2
         Assert.Equal(year + 10, MyUserClass.GetCurrentYear_OfInt());           // Context 1
+    }
+
+    [Fact]
+    public void DateTimeProvider_EmptyTypedContext()
+    {
+        // Arrange
+        Func<ContextSequence<EmptyTypedContext>, DateTime> sequence = _ => DateTime.Now;
+        var emptyTypedContext = new EmptyTypedContext();
+
+        // Act
+        var context = new DateTimeProviderContext(sequence);
+
+        // Assert
+        Assert.IsAssignableFrom<DateTimeProviderContext<EmptyTypedContext>>(context);
+        Assert.NotNull(context);
+        Assert.IsType<EmptyTypedContext>(emptyTypedContext);
     }
 
     [Fact]

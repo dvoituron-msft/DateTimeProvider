@@ -4,11 +4,6 @@
 public class DateTimeProvider<T>
 {
     /// <summary>
-    /// Indicates whether a context is required to be active.
-    /// </summary>
-    public static bool RequiredActiveContext { get; set; }
-
-    /// <summary>
     /// Gets a <see cref="DateTime" /> object that is set to the current date and time 
     /// on this computer, expressed as the local time.
     /// </summary>
@@ -25,7 +20,7 @@ public class DateTimeProvider<T>
     /// <exception cref="InvalidOperationException">If <see cref="RequiredActiveContext"/> is true and no context is active.</exception>
     internal static DateTime GetSystemDate(bool requiredContext = true)
     {
-        if (RequiredActiveContext && requiredContext)
+        if (DateTimeProvider.RequiredActiveContext && requiredContext)
         {
             var contextType = typeof(T) == typeof(EmptyTypedContext) ? "" : $"<{typeof(T).Name}>";
             throw new InvalidOperationException($"DateTimeProvider requires a context{contextType} to be set (e.g. `using var context = new DateTimeProviderContext{contextType}(new DateTime(2025, 1, 18));`");
@@ -66,5 +61,8 @@ public class DateTimeProvider<T>
 /// </summary>
 public class DateTimeProvider : DateTimeProvider<EmptyTypedContext>
 {
-
+    /// <summary>
+    /// Indicates whether a context is required to be active.
+    /// </summary>
+    public static bool RequiredActiveContext { get; set; }
 }

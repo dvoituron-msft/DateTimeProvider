@@ -6,11 +6,6 @@
 /// </summary>
 public record DateTimeProviderContext : DateTimeProviderContext<EmptyTypedContext>
 {
-    /// <summary />
-    protected DateTimeProviderContext(DateTimeProviderContext<EmptyTypedContext> original) : base(original)
-    {
-    }
-
     /// <summary>
     /// Create a new context for the <see cref="DateTimeProvider" /> using a sequence of date and time.
     /// </summary>

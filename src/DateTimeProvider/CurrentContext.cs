@@ -1,17 +1,6 @@
 ﻿/// <summary>
 /// Returns the contextual current date and time on this computer, expressed as the local time.
 /// </summary>
-public class CurrentContext : CurrentContext<EmptyTypedContext>
-{
-    /// <summary />
-    internal CurrentContext(object? context) : base(context)
-    {
-    }
-}
-
-/// <summary>
-/// Returns the contextual current date and time on this computer, expressed as the local time.
-/// </summary>
 public class CurrentContext<T>
 {
     private object? _context;
