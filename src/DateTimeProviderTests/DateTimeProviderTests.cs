@@ -164,16 +164,16 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
     public void DateTimeProvider_EmptyTypedContext()
     {
         // Arrange
-        Func<ContextSequence<EmptyTypedContext>, DateTime> sequence = _ => DateTime.Now;
-        var emptyTypedContext = new EmptyTypedContext();
+        Func<DateTimeProviderContext.ContextSequence<DateTimeProviderContext.EmptyTypedContext>, DateTime> sequence = _ => DateTime.Now;
+        var emptyTypedContext = new DateTimeProviderContext.EmptyTypedContext();
 
         // Act
         var context = new DateTimeProviderContext(sequence);
 
         // Assert
-        Assert.IsAssignableFrom<DateTimeProviderContext<EmptyTypedContext>>(context);
+        Assert.IsAssignableFrom<DateTimeProviderContext<DateTimeProviderContext.EmptyTypedContext>>(context);
         Assert.NotNull(context);
-        Assert.IsType<EmptyTypedContext>(emptyTypedContext);
+        Assert.IsType<DateTimeProviderContext.EmptyTypedContext>(emptyTypedContext);
     }
 
     [Fact]

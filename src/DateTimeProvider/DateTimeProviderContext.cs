@@ -4,7 +4,7 @@
 /// Represents the context for the <see cref="DateTimeProvider" />.
 /// This context returns the specified date and time while it is in scope.
 /// </summary>
-public record DateTimeProviderContext : DateTimeProviderContext<EmptyTypedContext>
+public record DateTimeProviderContext : DateTimeProviderContext<DateTimeProviderContext.EmptyTypedContext>
 {
     /// <summary>
     /// Create a new context for the <see cref="DateTimeProvider" /> using a sequence of date and time.
@@ -33,6 +33,20 @@ public record DateTimeProviderContext : DateTimeProviderContext<EmptyTypedContex
     public DateTimeProviderContext(DateTime[] values) : base(values)
     {
     }
+
+    /// <summary>
+    /// Represents a “fake” type to represent a non-generic context.
+    /// </summary>
+    public sealed record EmptyTypedContext { }
+
+    /// <summary>
+    /// Context information for a sequence.
+    /// </summary>
+    /// <typeparam name="U">The type parameter for the context sequence.</typeparam>
+    /// <param name="Index">The index of the context sequence.</param>
+    /// <param name="SourceContext">The source context associated with the sequence.</param>
+    /// <param name="SourceType">The type of the source.</param>
+    public record ContextSequence<U>(uint Index, object? SourceContext, Type SourceType);
 }
 
 /// <summary>
@@ -53,7 +67,7 @@ public record DateTimeProviderContext<T> : IDisposable
     /// Create a new context for the <see cref="DateTimeProvider" /> using a sequence of date and time.
     /// </summary>
     /// <param name="sequence">Sequence of date and time to return while in scope.</param>
-    public DateTimeProviderContext(Func<ContextSequence<T>, DateTime> sequence)
+    public DateTimeProviderContext(Func<DateTimeProviderContext.ContextSequence<T>, DateTime> sequence)
     {
         s_asyncScopeStack.Value = (s_asyncScopeStack.Value ?? ImmutableStack<DateTimeProviderContext<T>>.Empty).Push(this);
         Sequence = sequence;
@@ -82,7 +96,7 @@ public record DateTimeProviderContext<T> : IDisposable
     /// <summary>
     /// Gets the date and time to return while in scope.
     /// </summary>
-    internal Func<ContextSequence<T>, DateTime> Sequence { get; }
+    internal Func<DateTimeProviderContext.ContextSequence<T>, DateTime> Sequence { get; }
 
     /// <summary>
     /// Returns the next number between 0 and 99999999.
@@ -91,7 +105,7 @@ public record DateTimeProviderContext<T> : IDisposable
     internal DateTime NextValue(object? SourceContext = null)
     {
         var currentIndex = _asyncCurrentIndex.Value;
-        var value = Sequence.Invoke(new ContextSequence<T>(currentIndex, SourceContext, typeof(T)));
+        var value = Sequence.Invoke(new DateTimeProviderContext.ContextSequence<T>(currentIndex, SourceContext, typeof(T)));
 
         _asyncCurrentIndex.Value = currentIndex >= uint.MaxValue ? 0 : currentIndex + 1;
 

@@ -22,7 +22,7 @@ public class DateTimeProvider<T>
     {
         if (DateTimeProvider.RequiredActiveContext && requiredContext)
         {
-            var contextType = typeof(T) == typeof(EmptyTypedContext) ? "" : $"<{typeof(T).Name}>";
+            var contextType = typeof(T) == typeof(DateTimeProviderContext.EmptyTypedContext) ? "" : $"<{typeof(T).Name}>";
             throw new InvalidOperationException($"DateTimeProvider requires a context{contextType} to be set (e.g. `using var context = new DateTimeProviderContext{contextType}(new DateTime(2025, 1, 18));`");
         }
         else
@@ -54,12 +54,43 @@ public class DateTimeProvider<T>
     /// Gets a <see cref="DateTime" /> object that is set to today's date, with the time component set to 00:00:00.
     /// </summary>
     public static DateTime Today => DateTimeProvider<T>.GetNow().Date;
+
+    /// <summary>
+    /// Returns the contextual current date and time on this computer, expressed as the local time.
+    /// </summary>
+    public class CurrentContext<U>
+    {
+        private object? _context;
+
+        /// <summary />
+        internal CurrentContext(object? context)
+        {
+            _context = context;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="DateTime" /> object that is set to the current date and time 
+        /// on this computer, expressed as the local time.
+        /// </summary>
+        public DateTime Now => DateTimeProvider<U>.GetNow(_context);
+
+        /// <summary>
+        /// Gets a <see cref="DateTime" /> object that is set to the current date and time
+        /// on this computer, expressed as the Coordinated Universal Time (UTC).
+        /// </summary>
+        public DateTime UtcNow => DateTimeProvider<U>.GetNow(_context).ToUniversalTime();
+
+        /// <summary>
+        /// Gets a <see cref="DateTime" /> object that is set to today's date, with the time component set to 00:00:00.
+        /// </summary>
+        public DateTime Today => DateTimeProvider<U>.GetNow(_context).Date;
+    }
 }
 
 /// <summary>
 /// Returns the current date and time on this computer, expressed as the local time.
 /// </summary>
-public class DateTimeProvider : DateTimeProvider<EmptyTypedContext>
+public class DateTimeProvider : DateTimeProvider<DateTimeProviderContext.EmptyTypedContext>
 {
     /// <summary>
     /// Indicates whether a context is required to be active.
