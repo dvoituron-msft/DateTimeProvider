@@ -10,7 +10,7 @@
 
     public class Program
     {
-#if RUN_BENCHMARKS
+#if !RUN_BENCHMARKS
         static void Main()
         {
             /*
@@ -22,19 +22,19 @@
              *   DefaultJob : .NET 9.0.4 (9.0.425.16305), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
              * 
              * 
-             * | Method                                     | Mean     | Error    | StdDev   |
-             * |------------------------------------------- |---------:|---------:|---------:|
-             * | SystemDateTime_Now                         | 63.70 ns | 1.101 ns | 1.840 ns |
-             * | DateTimeProvider_Now                       | 65.90 ns | 1.299 ns | 1.945 ns |
-             * | DateTimeProvider_Typed_Now                 | 64.78 ns | 1.168 ns | 2.135 ns |
-             * | DateTimeProvider_WithContext_Now           | 65.54 ns | 1.104 ns | 1.618 ns |
-             * | DateTimeProvider_Typed_WithContext_Now     | 64.89 ns | 0.956 ns | 0.799 ns |
-             * |                                            |          |          |          |
-             * | SystemDateTime_AddYear                     | 70.38 ns | 1.015 ns | 0.900 ns |
-             * | DateTimeProvider_AddYear                   | 73.64 ns | 1.476 ns | 2.116 ns |
-             * | DateTimeProvider_Typed_AddYear             | 74.68 ns | 1.398 ns | 1.373 ns |
-             * | DateTimeProvider_WithContext_AddYear       | 72.23 ns | 1.470 ns | 1.444 ns |
-             * | DateTimeProvider_Typed_WithContext_AddYear | 73.25 ns | 1.461 ns | 2.000 ns |
+             * | Method                                     | Mean     | Error    | StdDev   | Median   |
+             * |------------------------------------------- |---------:|---------:|---------:|---------:|
+             * | SystemDateTime_Now                         | 63.87 ns | 1.224 ns | 2.932 ns | 62.69 ns |
+             * | DateTimeProvider_Now                       | 65.39 ns | 1.273 ns | 1.128 ns | 64.89 ns |
+             * | DateTimeProvider_Typed_Now                 | 64.90 ns | 1.316 ns | 1.665 ns | 64.02 ns |
+             * | DateTimeProvider_WithContext_Now           | 65.83 ns | 1.006 ns | 0.891 ns | 65.52 ns |
+             * | DateTimeProvider_Typed_WithContext_Now     | 68.55 ns | 2.157 ns | 6.291 ns | 65.51 ns |
+             * |                                            |          |          |          |          |
+             * | SystemDateTime_AddYear                     | 69.06 ns | 1.378 ns | 1.289 ns | 68.66 ns |
+             * | DateTimeProvider_AddYear                   | 73.39 ns | 1.501 ns | 1.404 ns | 72.82 ns |
+             * | DateTimeProvider_Typed_AddYear             | 72.96 ns | 1.440 ns | 1.415 ns | 72.60 ns |
+             * | DateTimeProvider_WithContext_AddYear       | 71.04 ns | 0.924 ns | 0.721 ns | 70.70 ns |
+             * | DateTimeProvider_Typed_WithContext_AddYear | 73.14 ns | 1.494 ns | 2.281 ns | 72.19 ns |
              * 
              */
 
