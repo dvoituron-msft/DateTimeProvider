@@ -1,20 +1,41 @@
 ﻿using System.Collections.Immutable;
 
-public record DateTimeProviderContext : DateTimeProviderContext<object>
+/// <summary>
+/// Represents the context for the <see cref="DateTimeProvider" />.
+/// This context returns the specified date and time while it is in scope.
+/// </summary>
+public record DateTimeProviderContext : DateTimeProviderContext<EmptyTypedContext>
 {
-    public DateTimeProviderContext(Func<ContextSequence<object>, DateTime> sequence) : base(sequence)
+    /// <summary />
+    protected DateTimeProviderContext(DateTimeProviderContext<EmptyTypedContext> original) : base(original)
     {
     }
 
+    /// <summary>
+    /// Create a new context for the <see cref="DateTimeProvider" /> using a sequence of date and time.
+    /// </summary>
+    /// <param name="sequence">Sequence of date and time to return while in scope.</param>
+    public DateTimeProviderContext(Func<ContextSequence<EmptyTypedContext>, DateTime> sequence) : base(sequence)
+    {
+    }
+
+    /// <summary>
+    /// Create a new context for the <see cref="DateTimeProvider" /> using the specified date and time.
+    /// </summary>
+    /// <param name="value">Specifies the date and time to return while in scope.</param>
     public DateTimeProviderContext(DateTime value) : base(value)
     {
     }
 
+    /// <summary>
+    /// Create a new context for the <see cref="DateTimeProvider" /> using a list of date and time.
+    /// Each call to <see cref="DateTimeProvider.Now" /> will return the next date and time in the list,
+    /// until the last date and time is reached.
+    /// If more calls are made after the last date and time, an <see cref="InvalidOperationException" /> is thrown.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     public DateTimeProviderContext(DateTime[] values) : base(values)
-    {
-    }
-
-    protected DateTimeProviderContext(DateTimeProviderContext<object> original) : base(original)
     {
     }
 }
@@ -72,10 +93,10 @@ public record DateTimeProviderContext<T> : IDisposable
     /// Returns the next number between 0 and 99999999.
     /// </summary>
     /// <returns></returns>
-    internal DateTime NextValue<U>(object? SourceContext = null)
+    internal DateTime NextValue(object? SourceContext = null)
     {
         var currentIndex = _asyncCurrentIndex.Value;
-        var value = Sequence.Invoke(new ContextSequence<T>(currentIndex, SourceContext));
+        var value = Sequence.Invoke(new ContextSequence<T>(currentIndex, SourceContext, typeof(T)));
 
         _asyncCurrentIndex.Value = currentIndex >= uint.MaxValue ? 0 : currentIndex + 1;
 
@@ -103,6 +124,4 @@ public record DateTimeProviderContext<T> : IDisposable
             s_asyncScopeStack.Value = s_asyncScopeStack.Value.Pop();
         }
     }
-
-    public record ContextSequence<U>(uint Index, object? SourceContext);
 }

@@ -149,8 +149,26 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
         using var context1 = new DateTimeProviderContext<int>(new DateTime(year + 10, 5, 26));
         using var context2 = new DateTimeProviderContext<MyUserClass>(new DateTime(year + 11, 5, 26));
 
-        Assert.Equal(year + 11, MyUserClass.GetCurrentYearMyUserClass());     // Context 2
-        Assert.Equal(year + 10, MyUserClass.GetCurrentYearOfInt());           // Context 1
+        Assert.Equal(year + 11, MyUserClass.GetCurrentYear_MyUserClass());     // Context 2
+        Assert.Equal(year + 10, MyUserClass.GetCurrentYear_OfInt());           // Context 1
+    }
+
+    [Fact]
+    public void DateTimeProvider_GenericSource_Sequence()
+    {
+        int year = 2020;
+
+        // Context Sequence
+        using var contextSequence = new DateTimeProviderContext<int>(
+            seq => seq.SourceType switch
+            {
+                Type t when t == typeof(int) => new DateTime(year + 10, 5, 26),
+                Type t when t == typeof(string) => new DateTime(year + 11, 5, 27),
+                _ => DateTime.MinValue,
+            });
+
+        //Assert.Equal(year + 11, MyUserClass.GetCurrentYearMyUserClass());     // Context 2
+        Assert.Equal(year + 10, MyUserClass.GetCurrentYear_OfInt());           // Context 1
     }
 
     [Theory]
@@ -183,23 +201,9 @@ public class DateTimeProviderTests : StrictAutoMockTestClass
     private class MyUserClass
     {
         public static int GetCurrentYear()
-        {
-            return DateTimeProvider.WithContext("My sample context").Now.Year;
-        }
-        public static int GetCurrentYear<T>()
-        {
-            return DateTimeProvider<T>.Now.Year;
-        }
-
-        public static int GetCurrentYearMyUserClass()
-        {
-            return DateTimeProvider<MyUserClass>.Now.Year;
-        }
-
-        public static int GetCurrentYearOfInt()
-        {
-            return DateTimeProvider<int>.Now.Year;
-        }
+            => DateTimeProvider.WithContext("My sample context").Now.Year;
+        public static int GetCurrentYear_MyUserClass() => DateTimeProvider<MyUserClass>.Now.Year;
+        public static int GetCurrentYear_OfInt() => DateTimeProvider<int>.Now.Year;
     }
 }
 

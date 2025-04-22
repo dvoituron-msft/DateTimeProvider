@@ -18,33 +18,9 @@ else
 The main problem is that the date obviously changes every day. And the quarterly calculation will run
 unit tests today, but maybe not tomorrow.
 
-## Dependency injection
-
-A clean way to do this, if you're using **dependency injection** (IoC) in your project, 
-is to create an interface to inject wherever you want to get the system's current date, 
-and define it, as required, in the unit tests.
-
-```csharp
-public interface IDateTimeHelper
-{
-    DateTime GetDateTimeNow();
-}
-
-public class DateTimeHelper : IDateTimeHelper
-{
-    public DateTime GetDateTimeNow()
-    {
-        return DateTime.Now;
-    }
-}
-```
-
-This works fine, as long as you use dependency injection. 
-But some people don't like injecting such a simple class. 
-Plus, what if you have existing code and just want to rewrite it to replace the date and time?
-
 ## Ambient Context Model
 
+A clean solution is to inject an IClock interface (or equivalent class) and mock this interface from the unit tests.
 To avoid injecting such a simple class and to simplify updating existing code, 
 We propose a solution that uses the **Ambient Context Model**.
 
@@ -102,6 +78,28 @@ using var contextSequence = new DateTimeProviderContext(
 
 If you make more than 2 calls, an `InvalidOperationException` exception will be thrown.
 This indicates that you have exhausted the defined return sequence and that there is no return value for the next call.
+
+## Unit Test - Complex projects
+
+In a complex project, you may have several classes that use the `DateTimeProvider` class.
+In this case, you can customize the context of each class by calling a generic DateTimeProvider<T>: `DateTimeProvider<MyClass>.Now`.
+The context used in the unit test is then restricted to the generic type of the class.
+
+This approach greatly simplifies date management in unit tests: over time, new `DateTimeProvider<T>` requests are added, 
+and the unit test simply needs to add the equivalent context, without worrying about the order of calls and subcontexts.
+
+```csharp
+using var context1 = new DateTimeProviderContext<MyClass1>(new DateTime(2020, 9, 26));  // 3rd quarter
+using var context2 = new DateTimeProviderContext<MyClass2>(new DateTime(2024, 2, 26));  // 1st quarter
+```
+
+If a unit test cannot find a context with the requested generic type, it will generate an `InvalidOperationException` 
+exception to indicate that there is no active context.
+
+Example of exception message:
+```
+DateTimeProvider requires a context<MyClass3> to be set (e.g. `using var context = new DateTimeProviderContext<MyClass3>(new DateTime(2025, 1, 18));`
+```
 
 ## Unit Test - Requirement to use context
 
